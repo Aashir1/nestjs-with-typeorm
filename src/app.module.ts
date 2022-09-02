@@ -4,15 +4,18 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { getEnvPath } from './common/helper/env.helper';
 
+// const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
+
+console.log('envFilePath: ', process.env.NODE_ENV)
+const ENV = process.env.NODE_ENV;
 @Module({
   imports: [
-    ConfigModule.forRoot({
-    isGlobal: true
-  }),
-  TypeOrmModule.forRootAsync({useClass: TypeOrmConfigService})
-],
+    ConfigModule.forRoot({ envFilePath: !ENV ? '.env' : `.env.${ENV}`, isGlobal: true }),
+    TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
